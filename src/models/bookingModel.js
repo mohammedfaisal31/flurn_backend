@@ -41,7 +41,7 @@ async function getSeatPricing(id) {
 
 // Create a booking
 // Create a booking
-async function createBooking(seatIds, userName, phoneNumber) {
+async function createBooking(seatIds, email, phoneNumber) {
   try {
     
     try {
@@ -54,8 +54,8 @@ async function createBooking(seatIds, userName, phoneNumber) {
       const bookingIds = [];
 
       for (const seatId of seatIds) {
-        const [bookingResult] = await db.promise().query('INSERT INTO bookings (user_name, phone_number, seat_id) VALUES (?, ?, ?)', [
-          userName,
+        const [bookingResult] = await db.promise().query('INSERT INTO bookings (email, phone_number, seat_id) VALUES (?, ?, ?)', [
+          email,
           phoneNumber,
           seatId,
         ]);
