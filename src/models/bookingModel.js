@@ -44,7 +44,7 @@ async function createBooking(seatIds, email, phoneNumber) {
   try {
     const connection = await db.promise().getConnection();
     await connection.beginTransaction();
-
+    console.log(email);
     // Check if any of the requested seats are already booked
     const [bookedSeats] = await connection.query(
       "SELECT id FROM seats WHERE id IN (?) AND is_booked = 1",
