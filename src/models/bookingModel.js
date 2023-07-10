@@ -15,22 +15,21 @@ async function getAllSeats() {
 async function getSeatPricing(id) {
   try {
     const [rows] = await db.promise().query(
-      `
-      SELECT 
-        sp.seat_class, 
-        CASE
-          WHEN s.booked_count < s.total_seats * 0.4 THEN IFNULL(sp.min_price, sp.normal_price)
-          WHEN s.booked_count >= s.total_seats * 0.4 AND s.booked_count <= s.total_seats * 0.6 THEN IFNULL(sp.normal_price, sp.max_price)
-          WHEN s.booked_count > s.total_seats * 0.6 THEN IFNULL(sp.max_price, sp.normal_price)
-        END AS price
-      FROM seat_pricing sp
-      JOIN (
-        SELECT seat_class, COUNT(*) AS booked_count, COUNT(*) AS total_seats
-        FROM seats
-        GROUP BY seat_class
-      ) s ON sp.seat_class = s.seat_class
-      WHERE sp.id = ?;
-    `,
+     ` SELECT
+      s.id,
+      s.seat_class,
+      CASE
+        WHEN s.booked_count < s.total_seats * 0.4 THEN IFNULL(sp.min_price, sp.normal_price)
+        WHEN s.booked_count >= s.total_seats * 0.4 AND s.booked_count <= s.total_seats * 0.6 THEN IFNULL(sp.normal_price, sp.max_price)
+        WHEN s.booked_count > s.total_seats * 0.6 THEN IFNULL(sp.max_price, sp.normal_price)
+      END AS price
+    FROM
+      seats s
+    JOIN
+      seat_pricing sp ON s.seat_class = sp.seat_class
+    WHERE
+      s.id = ?`
+    ,
       [id]
     );
 
