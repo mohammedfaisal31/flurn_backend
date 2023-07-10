@@ -14,7 +14,8 @@ async function getAllSeats() {
 // Fetch seat pricing based on bookings
 async function getSeatPricing(id) {
   try {
-    const [rows] = await db.promise().query(`
+    const [rows] = await db.promise().query(
+      `
       SELECT 
         sp.seat_class, 
         CASE
@@ -30,7 +31,9 @@ async function getSeatPricing(id) {
         GROUP BY seat_class
       ) s ON sp.seat_class = s.seat_class
       WHERE sp.id = ?;
-    `, [id]);
+    `,
+      [id]
+    );
 
     return rows[0];
   } catch (error) {
@@ -38,40 +41,45 @@ async function getSeatPricing(id) {
   }
 }
 
-
 // Create a booking
-async function createBooking(seatIds, userName, phoneNumber) {
+async function createBooking(seatIds, email, phone) {
   try {
-    const connection = db.promise()
-    
-
     try {
-      const bookedSeats = await db.promise().query('SELECT id FROM seats WHERE id IN (?) AND is_booked = 1', [seatIds]);
+      const bookedSeats = await db
+        .promise()
+        .query("SELECT id FROM seats WHERE id IN (?) AND is_booked = 1", [
+          seatIds,
+        ]);
       if (bookedSeats[0].length > 0) {
-        throw new Error('One or more seats are already booked');
+        throw new Error("One or more seats are already booked");
       }
 
-      const [bookingResult] = await db.promise().query('INSERT INTO bookings (user_name, phone_number) VALUES (?, ?)', [
-        userName,
-        phoneNumber,
-      ]);
+      const [bookingResult] = await db
+        .promise()
+        .query("INSERT INTO bookings (email, phone) VALUES (?, ?)", [
+          email,
+          phone,
+        ]);
 
       const bookingId = bookingResult.insertId;
 
       for (const seatId of seatIds) {
-        await db.promise().query('UPDATE seats SET is_booked = 1, booking_id = ? WHERE id = ?', [bookingId, seatId]);
+        await db
+          .promise()
+          .query(
+            "UPDATE seats SET is_booked = 1, booking_id = ? WHERE id = ?",
+            [bookingId, seatId]
+          );
       }
 
-      
       return { bookingId, seatIds };
     } catch (error) {
-      console.log(error) ;
+      console.log(error);
     }
   } catch (error) {
     console.log(error);
   }
 }
-
 
 // Retrieve bookings by user identifier
 async function getBookingsByUserIdentifier(userIdentifier) {
