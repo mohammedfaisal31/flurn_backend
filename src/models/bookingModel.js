@@ -29,7 +29,7 @@ async function getSeatPricing(id) {
         FROM seats
         GROUP BY seat_class
       ) s ON sp.seat_class = s.seat_class
-      WHERE s.id = ?;
+      WHERE seats.id = ?;
     `,
       [id]
     );
