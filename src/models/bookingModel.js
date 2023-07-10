@@ -46,10 +46,11 @@ async function createBooking(seatIds, userName, phoneNumber) {
     
     try {
       const bookedSeats = await db.promise().query('SELECT id FROM seats WHERE id IN (?) AND is_booked = 1', [seatIds]);
+      console.log(bookedSeats);
       if (bookedSeats.length > 0) {
         throw new Error('One or more seats are already booked');
       }
-      
+
       const bookingIds = [];
 
       for (const seatId of seatIds) {
