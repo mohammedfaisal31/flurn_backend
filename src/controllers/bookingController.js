@@ -26,16 +26,16 @@ async function getSeatPricing(req, res) {
 // Create a booking
 async function createBooking(req, res) {
   try {
-    const { seatIds, userName, phoneNumber } = req.body;
+    const { seatIds, email, phoneNumber } = req.body;
 
     // Validate request data
-    if (!seatIds || !userName || !phoneNumber) {
+    if (!seatIds || !email || !phoneNumber) {
       return res.status(400).json({ error: "Invalid request data" });
     }
 
     const bookingId = await Booking.createBooking(
       seatIds,
-      userName,
+      email,
       phoneNumber
     );
 
