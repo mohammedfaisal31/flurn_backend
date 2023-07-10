@@ -25,6 +25,7 @@ async function getSeatPricing(id) {
         WHERE id = ?`,
       [id]
     );
+    console.log(rows[0]);
     return rows[0];
   } catch (error) {
     throw error;
