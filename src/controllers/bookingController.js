@@ -27,7 +27,7 @@ async function getSeatPricing(req, res) {
 async function createBooking(req, res) {
   try {
     const { seatIds, email, phoneNumber } = req.body;
-
+    console.log(req.body);
     // Validate request data
     if (!seatIds || !email || !phoneNumber) {
       return res.status(400).json({ error: "Invalid request data" });
