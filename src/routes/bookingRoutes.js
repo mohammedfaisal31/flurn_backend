@@ -4,15 +4,15 @@ const router = express.Router();
 const BookingController = require('../controllers/bookingController');
 
 // Get all seats
-router.get('/seats', BookingController.getAllSeats);
+router.get('/api/seats', BookingController.getAllSeats);
 
 // Get seat pricing
-router.get('/seats/:id', BookingController.getSeatPricing);
+router.get('/api/seats/:id', BookingController.getSeatPricing);
 
 // Create a booking
-router.post('/booking', BookingController.createBooking);
+router.post('/api/booking', BookingController.createBooking);
 
 // Retrieve bookings by user identifier
-router.get('/bookings', BookingController.getBookingsByUserIdentifier);
+router.get('/api/bookings', BookingController.getBookingsByUserIdentifier);
 
 module.exports = router;
