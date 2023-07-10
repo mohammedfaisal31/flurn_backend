@@ -1,5 +1,5 @@
 // models/bookingModel.js
-const db = require("../db_config/db_config");
+const connection = require("../db_config/db_config");
 
 // Fetch all seats from db
 async function getAllSeats() {
@@ -42,8 +42,8 @@ async function getSeatPricing(id) {
 // Create a booking
 async function createBooking(seatIds, email, phoneNumber) {
   try {
-    const connection = await db.promise().getConnection();
-    await connection.beginTransaction();
+    // const connection = await db.promise().getConnection();
+    // await connection.beginTransaction();
     console.log(email);
     // Check if any of the requested seats are already booked
     const [bookedSeats] = await connection.query(
