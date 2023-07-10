@@ -89,7 +89,7 @@ async function getBookingsByUserIdentifier(userIdentifier) {
   try {
     const [rows] = await db
       .promise()
-      .query("SELECT * FROM bookings WHERE email = ? OR phone = ?", [
+      .query("SELECT * FROM bookings WHERE email = ? OR phone_number = ?", [
         userIdentifier,
         userIdentifier,
       ]);
