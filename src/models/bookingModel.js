@@ -67,10 +67,10 @@ async function createBooking(seatIds, userName, phoneNumber) {
       
       return bookingIds;
     } catch (error) {
-      throw error;
+      console.log(error) ;
     }
   } catch (error) {
-    throw error;
+    console.log(error);
   }
 }
 
