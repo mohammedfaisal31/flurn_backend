@@ -14,17 +14,24 @@ async function getAllSeats() {
 // Fetch seat pricing based on bookings
 async function getSeatPricing(id) {
   try {
-    const [rows] = await db.promise().query(
-      `SELECT seat_class, 
-                CASE 
-                  WHEN booked_count < total_seats * 0.4 THEN IFNULL(min_price, normal_price)
-                  WHEN booked_count >= total_seats * 0.4 AND booked_count <= total_seats * 0.6 THEN IFNULL(normal_price, max_price)
-                  WHEN booked_count > total_seats * 0.6 THEN IFNULL(max_price, normal_price)
-                END AS price
-        FROM seat_pricing
-        WHERE id = ?`,
-      [id]
-    );
+    const [rows] = await db.promise().query(`
+      SELECT 
+        sp.seat_class, 
+        CASE
+          WHEN s.booked_count < s.total_seats * 0.4 THEN IFNULL(sp.min_price, sp.normal_price)
+          WHEN s.booked_count >= s.total_seats * 0.4 AND s.booked_count <= s.total_seats * 0.6 THEN IFNULL(sp.normal_price, sp.max_price)
+          WHEN s.booked_count > s.total_seats * 0.6 THEN IFNULL(sp.max_price, sp.normal_price)
+        END AS price
+      FROM seat_pricing sp
+      JOIN (
+        SELECT seat_class, COUNT(*) AS booked_count, (SELECT COUNT(*) FROM seats WHERE seat_class = sp2.seat_class) AS total_seats
+        FROM seats
+        WHERE is_booked = 1
+        GROUP BY seat_class
+      ) s ON sp.seat_class = s.seat_class
+      WHERE sp.id = ?;
+    `, [id]);
+
     return rows[0];
   } catch (error) {
     throw error;
