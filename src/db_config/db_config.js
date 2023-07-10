@@ -1,5 +1,5 @@
 // db_config/db_config.js
-const mysql = require("mysql2/promise");
+const mysql = require("mysql2");
 const fs = require("fs");
 const csv = require("csv-parser");
 
