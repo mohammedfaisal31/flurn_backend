@@ -56,10 +56,10 @@ async function createBooking(seatIds, email, phoneNumber) {
 
     // Insert the booking and mark the seats as booked
     const [bookingResult] = await connection.query(
-      "INSERT INTO bookings (user_name, phone_number, seat_id) VALUES (?, ?, ?)",
+      "INSERT INTO bookings (email, phone, seat_id) VALUES (?, ?, ?)",
       [email, phoneNumber, seatIds[0]]
     );
-
+    console.log(bookingResult);
     const bookingId = bookingResult.insertId;
 
     // Update the is_booked flag for the booked seats
