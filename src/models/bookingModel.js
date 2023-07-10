@@ -49,7 +49,7 @@ async function createBooking(seatIds, userName, phoneNumber) {
       if (bookedSeats.length > 0) {
         throw new Error('One or more seats are already booked');
       }
-
+      
       const bookingIds = [];
 
       for (const seatId of seatIds) {
