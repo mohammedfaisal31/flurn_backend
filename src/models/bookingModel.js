@@ -50,6 +50,7 @@ async function createBooking(seatIds, email, phoneNumber) {
       "SELECT id FROM seats WHERE id IN (?) AND is_booked = 1",
       [seatIds]
     );
+    console.log(bookedSeats);
     if (bookedSeats.length > 0) {
       throw new Error("One or more seats are already booked");
     }
