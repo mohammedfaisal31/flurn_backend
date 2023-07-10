@@ -1,5 +1,5 @@
 // models/bookingModel.js
-const connection = require("../db_config/db_config");
+const db = require("../db_config/db_config");
 
 // Fetch all seats from db
 async function getAllSeats() {
@@ -46,7 +46,7 @@ async function createBooking(seatIds, email, phoneNumber) {
     // await connection.beginTransaction();
     console.log(email);
     // Check if any of the requested seats are already booked
-    const [bookedSeats] = await connection.promise().query(
+    const [bookedSeats] = await db.promise().query(
       "SELECT id FROM seats WHERE id IN (?) AND is_booked = 1",
       [seatIds]
     );
@@ -56,7 +56,7 @@ async function createBooking(seatIds, email, phoneNumber) {
     }
 
     // Insert the booking and mark the seats as booked
-    const [bookingResult] = await connection.query(
+    const [bookingResult] = await db.promise().query(
       "INSERT INTO bookings (email, phone, seat_id) VALUES (?, ?, ?)",
       [email, phoneNumber, seatIds[0]]
     );
@@ -64,12 +64,9 @@ async function createBooking(seatIds, email, phoneNumber) {
     const bookingId = bookingResult.insertId;
 
     // Update the is_booked flag for the booked seats
-    await connection.query("UPDATE seats SET is_booked = 1 WHERE id IN (?)", [
+    await db.promise().query("UPDATE seats SET is_booked = 1 WHERE id IN (?)", [
       seatIds,
     ]);
-
-    await connection.commit();
-    connection.release();
 
     return bookingId;
   } catch (error) {
