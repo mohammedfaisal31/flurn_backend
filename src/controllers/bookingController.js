@@ -7,7 +7,7 @@ async function getAllSeats(req, res) {
     const seats = await Booking.getAllSeats();
     res.json(seats);
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: error });
   }
 }
 
