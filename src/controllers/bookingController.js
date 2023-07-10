@@ -41,7 +41,7 @@ async function createBooking(req, res) {
 
     return res.json({ bookingId });
   } catch (error) {
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: error });
   }
 }
 
@@ -58,7 +58,7 @@ async function getBookingsByUserIdentifier(req, res) {
 
     return res.json(bookings);
   } catch (error) {
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: error });
   }
 }
 
