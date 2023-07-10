@@ -24,7 +24,7 @@ async function getSeatPricing(id) {
         END AS price
       FROM seat_pricing sp
       JOIN (
-        SELECT seat_class, COUNT(*) AS booked_count, (SELECT COUNT(*) FROM seats WHERE seat_class = sp2.seat_class) AS total_seats
+        SELECT seat_class, COUNT(*) AS booked_count, COUNT(*) AS total_seats
         FROM seats
         WHERE is_booked = 1
         GROUP BY seat_class
@@ -37,6 +37,7 @@ async function getSeatPricing(id) {
     throw error;
   }
 }
+
 
 // Create a booking
 async function createBooking(seatIds, userName, phoneNumber) {
