@@ -66,8 +66,8 @@ async function createBooking(seatIds, email, phone) {
       let totalAmount = 0;
       for (const seatId of seatIds) {
         const pricing = await getSeatPricing(seatId);
-        totalAmount += parseFloat(pricing.price);
-        console.log(totalAmount);
+        //totalAmount += parseFloat(pricing.price);
+        console.log(pricing);
         await db
           .promise()
           .query(
