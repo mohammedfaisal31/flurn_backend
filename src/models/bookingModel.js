@@ -56,7 +56,7 @@ async function createBooking(seatIds, email, phone) {
 
       const [bookingResult] = await db
         .promise()
-        .query("INSERT INTO bookings (email, phone) VALUES (?, ?)", [
+        .query("INSERT INTO bookings (email, phone_number) VALUES (?, ?)", [
           email,
           phone,
         ]);
@@ -67,7 +67,7 @@ async function createBooking(seatIds, email, phone) {
         await db
           .promise()
           .query(
-            "UPDATE seats SET is_booked = 1, booking_id = ? WHERE id = ?",
+            "UPDATE seats SET is_booked = 1, booking_id = ? WHERE id = ?",  
             [bookingId, seatId]
           );
       }
