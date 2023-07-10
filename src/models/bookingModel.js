@@ -40,7 +40,7 @@ async function getSeatPricing(id) {
 
 
 // Create a booking
-async function createBooking(seatIds, userName, phoneNumber) {
+async function createBooking(seatIds, email, phoneNumber) {
   try {
     const connection = await db.promise().getConnection();
     await connection.beginTransaction();
@@ -57,7 +57,7 @@ async function createBooking(seatIds, userName, phoneNumber) {
     // Insert the booking and mark the seats as booked
     const [bookingResult] = await connection.query(
       "INSERT INTO bookings (user_name, phone_number, seat_id) VALUES (?, ?, ?)",
-      [userName, phoneNumber, seatIds[0]]
+      [email, phoneNumber, seatIds[0]]
     );
 
     const bookingId = bookingResult.insertId;
