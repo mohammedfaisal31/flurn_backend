@@ -16,6 +16,7 @@ async function getSeatPricing(req, res) {
   try {
     const { id } = req.params;
     const pricing = await Booking.getSeatPricing(id);
+    console.log(pricing);
     res.json(pricing);
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
