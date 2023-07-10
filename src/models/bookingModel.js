@@ -54,7 +54,7 @@ async function createBooking(seatIds, email, phoneNumber) {
       const bookingIds = [];
 
       for (const seatId of seatIds) {
-        const [bookingResult] = await db.promise().query('INSERT INTO bookings (email, phone_number, seat_id) VALUES (?, ?, ?)', [
+        const [bookingResult] = await db.promise().query('INSERT INTO bookings (email, phone, seat_id) VALUES (?, ?, ?)', [
           email,
           phoneNumber,
           seatId,
