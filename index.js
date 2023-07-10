@@ -8,7 +8,7 @@ const app = express();
 app.use(bodyParser.json());
 
 // API routes
-app.use('/api/', bookingRoutes);
+app.use('/', bookingRoutes);
 
 // Start the server
 const port = process.env.PORT || 3000;
