@@ -8,7 +8,7 @@ const connection = mysql.createConnection({
   port: 3306, // MySQL port
   user: "root", // Using root
   password: "flurn_mysql", // Replace with your MySQL password
-  database: "booking_db", // Replace with your MySQL database name
+  database: "booking_test_db", // Replace with your MySQL database name
 });
 
 module.exports = connection;
