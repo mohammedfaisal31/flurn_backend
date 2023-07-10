@@ -19,7 +19,7 @@ async function getSeatPricing(req, res) {
     console.log(pricing);
     res.json(pricing);
   } catch (error) {
-    res.status(500).json({ error: err });
+    res.status(500).json({ error: error });
   }
 }
 
