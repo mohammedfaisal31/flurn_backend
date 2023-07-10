@@ -40,39 +40,45 @@ async function getSeatPricing(id) {
 
 
 // Create a booking
-async function createBooking(seatIds, email, phoneNumber) {
+// Create a booking
+async function createBooking(seatIds, userName, phoneNumber) {
   try {
-    // const connection = await db.promise().getConnection();
-    // await connection.beginTransaction();
-    console.log(email);
-    // Check if any of the requested seats are already booked
-    const [bookedSeats] = await db.promise().query(
-      "SELECT id FROM seats WHERE id IN (?) AND is_booked = 1",
-      [seatIds]
-    );
-    console.log(bookedSeats);
-    if (bookedSeats.length > 0) {
-      throw new Error("One or more seats are already booked");
+    const connection = await db.promise().getConnection();
+    await connection.beginTransaction();
+
+    try {
+      const bookedSeats = await connection.query('SELECT id FROM seats WHERE id IN (?) AND is_booked = 1', [seatIds]);
+      if (bookedSeats.length > 0) {
+        throw new Error('One or more seats are already booked');
+      }
+
+      const bookingIds = [];
+
+      for (const seatId of seatIds) {
+        const [bookingResult] = await connection.query('INSERT INTO bookings (user_name, phone_number, seat_id) VALUES (?, ?, ?)', [
+          userName,
+          phoneNumber,
+          seatId,
+        ]);
+
+        bookingIds.push(bookingResult.insertId);
+
+        await connection.query('UPDATE seats SET is_booked = 1 WHERE id = ?', [seatId]);
+      }
+
+      await connection.commit();
+      connection.release();
+
+      return bookingIds;
+    } catch (error) {
+      await connection.rollback();
+      throw error;
     }
-
-    // Insert the booking and mark the seats as booked
-    const [bookingResult] = await db.promise().query(
-      "INSERT INTO bookings (email, phone, seat_id) VALUES (?, ?, ?)",
-      [email, phoneNumber, seatIds[0]]
-    );
-    console.log(bookingResult);
-    const bookingId = bookingResult.insertId;
-
-    // Update the is_booked flag for the booked seats
-    await db.promise().query("UPDATE seats SET is_booked = 1 WHERE id IN (?)", [
-      seatIds,
-    ]);
-
-    return bookingId;
   } catch (error) {
     throw error;
   }
 }
+
 
 // Retrieve bookings by user identifier
 async function getBookingsByUserIdentifier(userIdentifier) {
