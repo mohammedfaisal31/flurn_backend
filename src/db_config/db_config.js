@@ -12,18 +12,26 @@ const connection = mysql.createConnection({
 });
 
 // Read the CSV file
-fs.createReadStream("/var/lib/mysql-files/Seats.csv")
-  .pipe(csv({ separator: "\t", enclosed: '"' }))
-  .on("data", (row) => {
-    // Insert each row into the seats table
-    connection.query(
-      "INSERT INTO seats (seat_identifier, seat_class) VALUES (?, ?)",
-      [row.seat_identifier, row.seat_class]
-    );
+fs.createReadStream('/var/lib/mysql-files/Seats.csv')
+  .pipe(csv({ separator: '\t', enclosed: '"' }))
+  .on('data', (row) => {
+    // Skip rows with null seat_identifier
+    if (!row.seat_identifier) {
+      return;
+    }
+
+    // Insert each valid row into the seats table
+    connection.query('INSERT INTO seats (seat_identifier, seat_class) VALUES (?, ?)', [
+      row.seat_identifier,
+      row.seat_class,
+    ], (error, results) => {
+      if (error) {
+        console.error(`Error inserting row: ${row.seat_identifier}`);
+      }
+    });
   })
-  .on("end", () => {
-    console.log("Data imported successfully");
+  .on('end', () => {
+    console.log('Data imported successfully');
     connection.end();
   });
-
 module.exports = connection;
