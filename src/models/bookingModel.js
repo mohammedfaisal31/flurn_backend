@@ -27,7 +27,6 @@ async function getSeatPricing(id) {
       JOIN (
         SELECT seat_class, COUNT(*) AS booked_count, COUNT(*) AS total_seats
         FROM seats
-        WHERE is_booked = 1
         GROUP BY seat_class
       ) s ON sp.seat_class = s.seat_class
       WHERE sp.id = ?;
