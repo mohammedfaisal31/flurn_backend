@@ -43,11 +43,9 @@ async function getSeatPricing(id) {
 // Create a booking
 async function createBooking(seatIds, userName, phoneNumber) {
   try {
-    const connection = await db.promise().getConnection();
-    await connection.beginTransaction();
-
+    
     try {
-      const bookedSeats = await connection.query('SELECT id FROM seats WHERE id IN (?) AND is_booked = 1', [seatIds]);
+      const bookedSeats = await db.promise().query('SELECT id FROM seats WHERE id IN (?) AND is_booked = 1', [seatIds]);
       if (bookedSeats.length > 0) {
         throw new Error('One or more seats are already booked');
       }
@@ -55,7 +53,7 @@ async function createBooking(seatIds, userName, phoneNumber) {
       const bookingIds = [];
 
       for (const seatId of seatIds) {
-        const [bookingResult] = await connection.query('INSERT INTO bookings (user_name, phone_number, seat_id) VALUES (?, ?, ?)', [
+        const [bookingResult] = await db.promise().query('INSERT INTO bookings (user_name, phone_number, seat_id) VALUES (?, ?, ?)', [
           userName,
           phoneNumber,
           seatId,
@@ -63,15 +61,12 @@ async function createBooking(seatIds, userName, phoneNumber) {
 
         bookingIds.push(bookingResult.insertId);
 
-        await connection.query('UPDATE seats SET is_booked = 1 WHERE id = ?', [seatId]);
+        await db.promise().query('UPDATE seats SET is_booked = 1 WHERE id = ?', [seatId]);
       }
 
-      await connection.commit();
-      connection.release();
-
+      
       return bookingIds;
     } catch (error) {
-      await connection.rollback();
       throw error;
     }
   } catch (error) {
