@@ -62,15 +62,16 @@ async function getSeatPricing(id) {
 
 // Create a booking
 async function createBooking(seatIds, email, phone) {
+  function seatAlreadyBookedError() {
+    throw new Error("One or more seats are already booked");
+  }
   try {
       const bookedSeats = await db
         .promise()
         .query("SELECT id FROM seats WHERE id IN (?) AND is_booked = 1", [
           seatIds,
         ]);
-        function seatAlreadyBookedError() {
-          return new Error("One or more seats are already booked");
-        }
+        
         if (bookedSeats[0].length > 0) {
         seatAlreadyBookedError();
         }
