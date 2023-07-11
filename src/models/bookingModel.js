@@ -60,11 +60,14 @@ async function getSeatPricing(id) {
   }
 }
 
+//Error indicator function
+function seatAlreadyBookedError() {
+  throw new Error("One or more seats are already booked");
+}
+
 // Create a booking
 async function createBooking(seatIds, email, phone) {
-  function seatAlreadyBookedError() {
-    throw new Error("One or more seats are already booked");
-  }
+
   try {
       const bookedSeats = await db
         .promise()
@@ -73,7 +76,7 @@ async function createBooking(seatIds, email, phone) {
         ]);
         
         if (bookedSeats[0].length > 0) {
-        seatAlreadyBookedError();
+          seatAlreadyBookedError();
         }
       
       const [bookingResult] = await db
