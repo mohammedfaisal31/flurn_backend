@@ -20,7 +20,6 @@ async function getSeatPricing(id) {
       seats.id,
       seats.seat_identifier,
       seats.seat_class,
-      seats.is_booked,
       seats.booking_id,
       CASE
           WHEN booking_percentages.percentage IS NULL THEN
@@ -57,21 +56,20 @@ async function getSeatPricing(id) {
 
     return rows[0];
   } catch (error) {
-    throw error;
+    return error;
   }
 }
 
 // Create a booking
 async function createBooking(seatIds, email, phone) {
   try {
-    try {
       const bookedSeats = await db
         .promise()
         .query("SELECT id FROM seats WHERE id IN (?) AND is_booked = 1", [
           seatIds,
         ]);
       if (bookedSeats[0].length > 0) {
-        throw new Error("One or more seats are already booked");
+        return new Error("One or more seats are already booked");
       }
 
       const [bookingResult] = await db
@@ -98,11 +96,9 @@ async function createBooking(seatIds, email, phone) {
 
       return { bookingId, totalAmount };
     } catch (error) {
-      console.log(error);
+      return (error);
     }
-  } catch (error) {
-    console.log(error);
-  }
+  
 }
 
 // Retrieve bookings by user identifier
@@ -116,7 +112,7 @@ async function getBookingsByUserIdentifier(userIdentifier) {
       ]);
     return rows;
   } catch (error) {
-    throw error;
+    return error;
   }
 }
 

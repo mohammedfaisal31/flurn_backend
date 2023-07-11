@@ -7,7 +7,7 @@ async function getAllSeats(req, res) {
     const seats = await Booking.getAllSeats();
     res.json(seats);
   } catch (error) {
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: "Could not fetch seats"  });
   }
 }
 
@@ -16,10 +16,9 @@ async function getSeatPricing(req, res) {
   try {
     const { id } = req.params;
     const pricing = await Booking.getSeatPricing(id);
-    console.log(pricing);
     res.json(pricing);
   } catch (error) {
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: "Could not fetch price" });
   }
 }
 
@@ -41,7 +40,7 @@ async function createBooking(req, res) {
 
     return res.json({ bookingId });
   } catch (error) {
-    return res.status(500).json({ error: error });
+    return res.status(500).json({ error: "Could not create booking" });
   }
 }
 
@@ -58,7 +57,7 @@ async function getBookingsByUserIdentifier(req, res) {
 
     return res.json(bookings);
   } catch (error) {
-    return res.status(500).json({ error: error });
+    return res.status(500).json({ error: "Could not fetch booking info" });
   }
 }
 
