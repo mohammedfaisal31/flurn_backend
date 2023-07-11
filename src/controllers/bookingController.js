@@ -40,7 +40,10 @@ async function createBooking(req, res) {
 
     return res.json(bookingResult );
   } catch (error) {
-    return res.status(500).json({ error: "Could not create booking" });
+    if (error === seatAlreadyBookedError())
+      return res.status(500).json({ error: error });
+    else
+      return res.status(500).json({ error: "Could not create booking" });
   }
 }
 
