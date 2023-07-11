@@ -56,7 +56,7 @@ async function getSeatPricing(id) {
 
     return rows[0];
   } catch (error) {
-    return error;
+    throw error;
   }
 }
 
@@ -96,7 +96,7 @@ async function createBooking(seatIds, email, phone) {
 
       return { bookingId, totalAmount };
     } catch (error) {
-      return (error);
+      throw (error);
     }
   
 }
@@ -112,7 +112,7 @@ async function getBookingsByUserIdentifier(userIdentifier) {
       ]);
     return rows;
   } catch (error) {
-    return error;
+    throw error;
   }
 }
 
