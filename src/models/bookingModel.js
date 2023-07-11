@@ -17,33 +17,39 @@ async function getSeatPricing(id) {
     const [rows] = await db.promise().query(
       `
       SELECT
-  s.id,
-  s.seat_identifier,
-  s.seat_class,
-  CASE
-    WHEN s_count.booked_count < s_count.total_seats * 0.4 THEN IFNULL(sp.min_price, sp.normal_price)
-    WHEN s_count.booked_count >= s_count.total_seats * 0.4 AND s_count.booked_count <= s_count.total_seats * 0.6 THEN IFNULL(sp.normal_price, sp.max_price)
-    WHEN s_count.booked_count > s_count.total_seats * 0.6 THEN IFNULL(sp.max_price, sp.normal_price)
-  END AS price
-FROM
-  seats s
-JOIN
-  (
-    SELECT
-      seat_class,
-      COUNT(*) AS booked_count,
-      (SELECT COUNT(*) FROM seats s2 WHERE s2.seat_class = s.seat_class) AS total_seats
-    FROM
-      seats s
-    WHERE
-      s.is_booked = 1
-    GROUP BY
-      seat_class
-  ) AS s_count ON s.seat_class = s_count.seat_class
-JOIN
-  seat_pricing sp ON s.seat_class = sp.seat_class
-WHERE
-  s.id = ?;
+      seats.id,
+      seats.seat_identifier,
+      seats.seat_class,
+      seats.is_booked,
+      seats.booking_id,
+      CASE
+          WHEN booking_percentages.percentage IS NULL THEN
+              IF(seat_pricing.min_price IS NOT NULL, seat_pricing.min_price, seat_pricing.normal_price)
+          WHEN booking_percentages.percentage < 40 THEN
+              IF(seat_pricing.min_price IS NOT NULL, seat_pricing.min_price, seat_pricing.normal_price)
+          WHEN booking_percentages.percentage BETWEEN 40 AND 60 THEN
+              IF(seat_pricing.normal_price IS NOT NULL, seat_pricing.normal_price, seat_pricing.max_price)
+          ELSE
+              IF(seat_pricing.max_price IS NOT NULL, seat_pricing.max_price, seat_pricing.normal_price)
+      END AS price
+  FROM
+      seats
+  JOIN
+      seat_pricing ON seats.seat_class = seat_pricing.seat_class
+  LEFT JOIN
+      (
+      SELECT
+          seat_class,
+          (COUNT(is_booked)*100/(SELECT COUNT(*) FROM seats WHERE seats.seat_class = booking_percentages.seat_class)) AS percentage
+      FROM
+          seats AS booking_percentages
+      WHERE
+          is_booked = 1
+      GROUP BY
+          seat_class
+      ) AS booking_percentages ON seats.seat_class = booking_percentages.seat_class
+  WHERE
+      seats.id = ?;
 
     `,
       [id]
