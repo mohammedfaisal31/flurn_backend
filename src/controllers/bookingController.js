@@ -32,13 +32,13 @@ async function createBooking(req, res) {
       return res.status(400).json({ error: "Invalid request data" });
     }
 
-    const bookingId = await Booking.createBooking(
+    const bookingResult = await Booking.createBooking(
       seatIds,
       email,
       phoneNumber
     );
 
-    return res.json({ bookingId });
+    return res.json(bookingResult );
   } catch (error) {
     return res.status(500).json({ error: "Could not create booking" });
   }
