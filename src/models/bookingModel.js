@@ -68,12 +68,13 @@ async function createBooking(seatIds, email, phone) {
         .query("SELECT id FROM seats WHERE id IN (?) AND is_booked = 1", [
           seatIds,
         ]);
-      if (bookedSeats[0].length > 0) {
+        function seatAlreadyBookedError() {
+          return new Error("One or more seats are already booked");
+        }
+        if (bookedSeats[0].length > 0) {
         seatAlreadyBookedError();
-      }
-      function seatAlreadyBookedError() {
-        return new Error("One or more seats are already booked");
-      }
+        }
+      
       const [bookingResult] = await db
         .promise()
         .query("INSERT INTO bookings (email, phone_number) VALUES (?, ?)", [
